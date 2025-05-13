@@ -2,62 +2,73 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=
-    , initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/styles.css">
     <title>TypeRacer</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0 /dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">TypeRacer</a>
-                <button class="btn btn-outline-primary" type="button">Instructions</button>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center my-4">
+                    <h1>TypeRacer</h1>
+                    <button class="btn btn-light mt-3" id="instructions-btn">
+                        <i class="fas fa-info-circle"></i> Instructions
+                    </button>
+                </div>
             </div>
-        </nav>
+        </div>
     </header>
-    <main class="container mt-4"></main>
-        <div class="row">
-            <div class="col-12 col-md-8">
-                <div class="p-3 border bg-light">
-                    <div class="input-group mb-3"></div>
-                        <label class="input-group-text" for="difficultySelect">Select Difficulty</label>
-                        <select class="form-select" id="difficultySelect">
-                            <option selected>Choose...</option>
+
+    <main>
+        <div class="container my-5">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="difficulty">Select Difficulty</label>
+                        <select class="form-select" id="difficulty">
                             <option value="easy">Easy</option>
                             <option value="medium">Medium</option>
                             <option value="hard">Hard</option>
                         </select>
-                        <div class="mt-3">
-                            <h3>Sample Text</h3>
-                            <p id="sampleText">The quick brown fox jumps over the lazy dog.</p>
-                            <textarea class="form-control mt-2" id="typingBox" rows="5" placeholder="Start typing here..."></textarea>
-                            <div class="mt-3">
-                                <button class="btn btn-success" id="startButton">Start</button>
-                                <button class="btn btn-danger" id="stopButton" disabled>Stop</button>
-                                <button class="btn btn-secondary" id="retryButton" disabled>Retry</button>
-                            </div>
+                    </div>
+                    <div class="test-area">
+                        <p class="lead">Test your typing speed by typing the text shown below:</p>
+                        <div class="mb-3 p-3 border" id="sample-text">
+                            The cat sat on the mat.
                         </div>
                     </div>
-                    
+                    <div class="mb-3">
+                        <label class="form-label visually-hidden" for="user-input">Type Here</label>
+                        <textarea class="form-control" id="user-input" rows="6" placeholder="Click the start button to begin the test"></textarea>
+                    </div>
+                    <div class="mb-3 text-center">
+                        <button class="btn btn-lg btn-outline-orange" id="start-btn">Start</button>
+                        <button class="btn btn-lg btn-outline-orange" id="stop-btn">Stop</button>
+                        <button class="btn btn-lg btn-outline-orange" id="retry-btn">Retry</button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div id="results-area" class="text-center">
+                        <h2>Results</h2>
+                        <div>
+                            <p>Level: <span id="level">Easy</span></p>
+                            
+                        </div>
+                        <div>
+                            <p>Time: <span id="time">0</span>s</p>
+                        </div>
+                        <div>
+                            <p>WPM: <span id="wpm">0</span></p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-12 col-md-4">
-                <div class="p-3 border bg-light">
-                    <h2>Results</h2>
-                    <ul>
-                        <li>Level: <span id="level">N/A</span></li>
-                        <li>Words per minute: <span id="wpm">0</span></li>
-                        <li>Accuracy: <span id="accuracy">0%</span></li>
-                        <li>Time elapsed: <span id="time">0s</span></li>
-                    </ul>
-                </div>
-            </div>
-            
         </div>
     </main>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist /js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js"></script>
+    <!-- Add your own kit code to enable Font Aweseme -->
     <script src="https://kit.fontawesome.com/YOUR-KIT-CODE-HERE.js" crossorigin="anonymous"></script>
 
 </body>
