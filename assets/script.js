@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // DOM Elements
     const difficultySelect = document.getElementById('difficulty');
     const sampleTextDiv = document.getElementById('sample-text');
+    const startButton = document.getElementById('start-btn');
     const stopButton = document.getElementById('stop-btn');
     const retryButton = document.getElementById('retry-btn');
     const resultDiv = document.getElementById('results-area');
@@ -26,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const timeSpan = document.getElementById('time');
     const wpmSpan = document.getElementById('wpm');
 
-    let startTime, endTime, timerInterval;
+    let startTime = null, endTime = null, timerInterval;
     let currentText = "";
     let testRunning = false;
 
@@ -55,35 +56,61 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function beginTypingTest() {
+        if (testRunning) return;
+    
         testRunning = true;
         startTime = Date.now();
         updateLiveTimer();
         timerInterval = setInterval(updateLiveTimer, 100);
-        stopButton.disabled = false;
+        clearResults();
+    
+        startButton.disabled = true;
+        stopButton.disabled = true;
+        retryButton.disabled = true; // ✅ Fix here
     }
+    
 
     function stopTest() {
+        if (!testRunning) return;
+
         clearInterval(timerInterval);
         endTime = Date.now();
         testRunning = false;
 
         userInputElem.disabled = true;
-        stopButton.disabled = true;
-
         displayResults();
+
+        stopButton.disabled = true;
+        startButton.disabled = false;
+        retryButton.disabled = false;
     }
 
     function retryTest() {
-        userInputElem.value = '';
+        clearInterval(timerInterval);
+        testRunning = false;
+        startTime = null;
+        endTime = null;
+    
         userInputElem.disabled = false;
+        userInputElem.value = '';
         userInputElem.focus();
-        timeSpan.textContent = '0';
+    
+        timeSpan.textContent = '0.00';
         wpmSpan.textContent = '0';
         clearResults();
         updateSampleText();
-        testRunning = false;
-        clearInterval(timerInterval);
+    
+        startButton.disabled = true;
+        stopButton.disabled = true;
+        retryButton.disabled = true; // ✅ Disable it until user completes the next test
+    
+        // Force input event to allow restart detection
+        setTimeout(() => {
+            const event = new Event('input', { bubbles: true });
+            userInputElem.dispatchEvent(event);
+        }, 10);
     }
+    
 
     function clearResults() {
         const oldMessages = resultDiv.querySelectorAll('.text-info, .text-success, .text-danger');
@@ -116,7 +143,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const resultMessage = document.createElement('p');
         resultMessage.className = 'text-info';
         resultMessage.textContent = `You typed ${correctWords} correct words. Your WPM is ${wpm}. Difficulty: ${levelSpan.textContent}`;
-
         resultDiv.appendChild(resultMessage);
     }
 
@@ -127,6 +153,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function highlightLiveInput() {
+        if (!testRunning && userInputElem.value.trim() !== '') {
+            beginTypingTest();
+        }
+
         const userWords = userInputElem.value.trim().split(/\s+/);
         const sampleWords = currentText.trim().split(/\s+/);
 
@@ -144,32 +174,44 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Event Listeners
-    difficultySelect.addEventListener('change', updateSampleText);
-    // Remove manual stop button functionality
-// stopButton.addEventListener('click', stopTest);
-
-// Listen for Enter key to stop test
-userInputElem.addEventListener('keydown', function (event) {
-    if (event.key === 'Enter') {
-        event.preventDefault(); // prevent newline
-        if (testRunning) {
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // prevent newline in textarea
             stopTest();
         }
     }
-});
 
+    // Event Listeners
+    difficultySelect.addEventListener('change', updateSampleText);
     retryButton.addEventListener('click', retryTest);
+    userInputElem.addEventListener('input', highlightLiveInput);
+    userInputElem.addEventListener('keydown', handleKeyPress);
 
-    userInputElem.addEventListener('input', function () {
-        if (!testRunning && userInputElem.value.trim().length > 0) {
-            beginTypingTest();
-        }
-        highlightLiveInput();
-    });
+// Init
+userInputElem.disabled = false;
+stopButton.disabled = true;
+//retryButton.disabled = true; // ✅ Ensure it's disabled on first load
+updateSampleText();
+const instructionsBtn = document.getElementById('instructions-btn');
+const instructionsModal = document.getElementById('instructions-modal');
+const closeInstructionsBtn = document.getElementById('close-instructions');
 
-    // Init
-    userInputElem.disabled = false;
-    stopButton.disabled = true;
-    updateSampleText();
+instructionsBtn.addEventListener('click', () => {
+    instructionsModal.style.display = 'flex'; // show modal
 });
+
+closeInstructionsBtn.addEventListener('click', () => {
+    instructionsModal.style.display = 'none'; // hide modal
+});
+
+// Optional: close modal when clicking outside the modal content
+instructionsModal.addEventListener('click', (e) => {
+    if (e.target === instructionsModal) {
+        instructionsModal.style.display = 'none';
+    }
+});
+
+});
+
+
+
