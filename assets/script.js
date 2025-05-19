@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // DOM Elements
     const difficultySelect = document.getElementById('difficulty');
     const sampleTextDiv = document.getElementById('sample-text');
-    const startButton = document.getElementById('start-btn');
     const stopButton = document.getElementById('stop-btn');
     const retryButton = document.getElementById('retry-btn');
     const resultDiv = document.getElementById('results-area');
@@ -29,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let startTime, endTime, timerInterval;
     let currentText = "";
+    let testRunning = false;
 
     function getRandomText(textArray) {
         const randomIndex = Math.floor(Math.random() * textArray.length);
@@ -54,41 +54,34 @@ document.addEventListener('DOMContentLoaded', function () {
         return text.split(' ').map((word, i) => `<span id="word-${i}">${word}</span>`).join(' ');
     }
 
-    function startTest() {
-        userInputElem.value = '';
-        userInputElem.disabled = false;
-        userInputElem.focus();
-        clearResults();
-
+    function beginTypingTest() {
+        testRunning = true;
         startTime = Date.now();
-        updateLiveTimer(); // show immediate 0.00
+        updateLiveTimer();
         timerInterval = setInterval(updateLiveTimer, 100);
-
-        startButton.disabled = true;
         stopButton.disabled = false;
     }
 
     function stopTest() {
         clearInterval(timerInterval);
         endTime = Date.now();
+        testRunning = false;
 
         userInputElem.disabled = true;
         stopButton.disabled = true;
-        startButton.disabled = false;
 
         displayResults();
     }
 
     function retryTest() {
         userInputElem.value = '';
-        userInputElem.disabled = true;
+        userInputElem.disabled = false;
+        userInputElem.focus();
         timeSpan.textContent = '0';
         wpmSpan.textContent = '0';
         clearResults();
         updateSampleText();
-
-        startButton.disabled = false;
-        stopButton.disabled = true;
+        testRunning = false;
         clearInterval(timerInterval);
     }
 
@@ -153,13 +146,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Event Listeners
     difficultySelect.addEventListener('change', updateSampleText);
-    startButton.addEventListener('click', startTest);
-    stopButton.addEventListener('click', stopTest);
+    // Remove manual stop button functionality
+// stopButton.addEventListener('click', stopTest);
+
+// Listen for Enter key to stop test
+userInputElem.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter') {
+        event.preventDefault(); // prevent newline
+        if (testRunning) {
+            stopTest();
+        }
+    }
+});
+
     retryButton.addEventListener('click', retryTest);
-    userInputElem.addEventListener('input', highlightLiveInput);
+
+    userInputElem.addEventListener('input', function () {
+        if (!testRunning && userInputElem.value.trim().length > 0) {
+            beginTypingTest();
+        }
+        highlightLiveInput();
+    });
 
     // Init
-    userInputElem.disabled = true;
+    userInputElem.disabled = false;
     stopButton.disabled = true;
     updateSampleText();
 });

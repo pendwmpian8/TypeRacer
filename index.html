@@ -6,7 +6,7 @@
     <title>TypeRacer</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/styles.css">
-    <script src="https://kit.fontawesome.com/d72f5ec7ae.js" crossorigin="anonymous"></script>
+    <script src="assets/script.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <header>
@@ -41,11 +41,10 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label visually-hidden" for="user-input">Type Here</label>
-                        <textarea class="form-control" id="user-input" rows="6" placeholder="Click the start button to begin the test" disabled></textarea>
+                        <textarea class="form-control" id="user-input" rows="6" placeholder="Click the start button to begin the test"></textarea>
                     </div>
                     <div class="mb-3 text-center">
-                        <button class="btn btn-lg btn-outline-orange" id="start-btn">Start</button>
-                        <button class="btn btn-lg btn-outline-orange" id="stop-btn" disabled>Stop</button>
+                        <button class="btn btn-lg btn-outline-orange" id="stop-btn" style="display: none;" disabled>Stop</button>
                         <button class="btn btn-lg btn-outline-orange" id="retry-btn">Retry</button>
                     </div>
                 </div>
